@@ -1,0 +1,75 @@
+/* login.css */
+
+/* Universal reset for inputs */
+input:focus {
+  box-shadow: none;
+  border-color: #0d6efd;
+}
+
+/* Button hover effect */
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004999;
+}
+
+/* Auth form container tweaks */
+.form-container {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+}
+
+/* Divider with text */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.divider span {
+  padding: 0 10px;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Social login buttons */
+.social-btn {
+  width: 100%;
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.social-btn:hover {
+  background-color: #f8f9fa;
+}
+
+/* Forgot password link */
+.forgot-password {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.forgot-password:hover {
+  color: #0d6efd;
+  text-decoration: underline;
+}
+
+/* Improve form spacing on mobile */
+@media (max-width: 576px) {
+  .form-container {
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+}
