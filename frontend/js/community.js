@@ -166,3 +166,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+ // Logout functionality
+ document.getElementById('logoutButton').addEventListener('click', function(e) {
+  e.preventDefault();
+  // Show the logout modal instead of using confirm
+  const logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
+  logoutModal.show();
+});
+
+// Add event listener for the confirm logout button in the modal
+document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+  // Hide the modal
+  const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutConfirmModal'));
+  logoutModal.hide();
+  
+  // Display logout successful message
+  alert("Logged out successfully!");
+  
+  // Redirect to login page
+  window.location.href = 'index.html';
+});

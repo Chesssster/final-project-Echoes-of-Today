@@ -236,15 +236,97 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // Check if we're editing an existing journal
+  const urlParams = new URLSearchParams(window.location.search);
+  const journalId = urlParams.get('id');
+  let currentJournal = null;
+  
+  // If we have an ID, load the journal for editing
+  if (journalId) {
+    // Get journals from localStorage
+    const journals = JSON.parse(localStorage.getItem('journals') || '[]');
+    currentJournal = journals.find(journal => journal.id == journalId);
+    
+    if (currentJournal) {
+      // Populate form fields
+      document.getElementById('journalTitle').value = currentJournal.title;
+      document.getElementById('journalContent').value = currentJournal.content;
+      
+      // Update page title to indicate editing mode
+      document.querySelector('h1.page-title').textContent = 'Edit Journal Entry';
+      
+      // Update button text
+      const submitButton = document.querySelector('#writeForm button[type="submit"]');
+      if (submitButton) {
+        submitButton.textContent = 'Update Journal';
+      }
+    }
+  }
+  
   // Form submission 
   document.getElementById('writeForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // In a real application, you would process the form data, including the images
-    alert('Journal saved! In a real application, your content including images would be saved to the server.');
+    // Get form values
+    const title = document.getElementById('journalTitle').value;
+    const content = document.getElementById('journalContent').value;
+    const date = new Date();
     
-    // Reset form or redirect
-    // this.reset();
-    // window.location.href = 'home.html';
+    // Get existing journals from localStorage
+    let journals = JSON.parse(localStorage.getItem('journals') || '[]');
+    
+    if (currentJournal) {
+      // Editing existing journal
+      const index = journals.findIndex(journal => journal.id == currentJournal.id);
+      
+      if (index !== -1) {
+        // Update the existing journal
+        journals[index] = {
+          ...currentJournal,
+          title: title,
+          content: content,
+          updatedAt: date.toISOString()
+        };
+      }
+    } else {
+      // Create a new journal entry object
+      const journalEntry = {
+        id: Date.now(), // Use timestamp as a unique ID
+        title: title,
+        content: content,
+        date: date.toISOString(),
+        createdAt: date.toISOString()
+      };
+      
+      // Add new entry
+      journals.push(journalEntry);
+    }
+    
+    // Save back to localStorage
+    localStorage.setItem('journals', JSON.stringify(journals));
+    
+    // Redirect to home page
+    window.location.href = 'home.html';
   });
+
+  // Logout functionality
+ document.getElementById('logoutButton').addEventListener('click', function(e) {
+  e.preventDefault();
+  // Show the logout modal instead of using confirm
+  const logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
+  logoutModal.show();
+});
+
+// Add event listener for the confirm logout button in the modal
+document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+  // Hide the modal
+  const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutConfirmModal'));
+  logoutModal.hide();
+  
+  // Display logout successful message
+  alert("Logged out successfully!");
+  
+  // Redirect to login page
+  window.location.href = 'index.html';
+});
 });

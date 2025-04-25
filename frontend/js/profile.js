@@ -16,6 +16,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const accountSection = document.getElementById('accountSection');
   const helpSection = document.getElementById('helpSection');
   
+  // Profile elements
+  const changePhotoBtn = document.querySelector('.profile-picture-container button');
+  const profilePicture = document.querySelector('.profile-picture img');
+  const profileName = document.querySelector('.profile-info h3');
+  const profileUsername = document.querySelector('.profile-info .text-muted');
+  const profileBio = document.querySelector('.profile-bio');
+  
   // Check for saved sidebar state
   const sidebarHidden = localStorage.getItem('sidebarHidden') === 'true';
   
@@ -96,12 +103,185 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // Load profile data
+  function loadProfileData() {
+    // In a real application, fetch this data from a server/API
+    // For now, we'll use localStorage
+    const profileData = JSON.parse(localStorage.getItem('userProfile')) || {
+      name: 'John Doe',
+      username: 'johndoe',
+      joined: 'April 2025',
+      bio: 'Nature enthusiast and amateur photographer. I journal daily to capture life\'s moments both big and small.',
+      profilePicUrl: 'https://via.placeholder.com/150'
+    };
+    
+    // Update profile elements with data
+    profileName.textContent = profileData.name;
+    profileUsername.textContent = '@' + profileData.username;
+    profileBio.textContent = profileData.bio;
+    
+    // Set profile picture if available
+    if (profileData.profilePicUrl) {
+      profilePicture.src = profileData.profilePicUrl;
+    }
+    
+    return profileData;
+  }
+  
+  // Create edit profile modal
+  function createEditProfileModal() {
+    // Get current profile data
+    const currentProfile = loadProfileData();
+    
+    // Create modal if it doesn't exist
+    if (!document.getElementById('editProfileModal')) {
+      const modalHTML = `
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="profileEditForm">
+                  <div class="mb-3">
+                    <label for="profileName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="profileName" value="${currentProfile.name}">
+                  </div>
+                  <div class="mb-3">
+                    <label for="profileUsername" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="profileUsername" value="${currentProfile.username}">
+                  </div>
+                  <div class="mb-3">
+                    <label for="profileBio" class="form-label">Bio</label>
+                    <textarea class="form-control" id="profileBio" rows="3">${currentProfile.bio}</textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add modal to the page
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      
+      // Add event listener to save button
+      document.getElementById('saveProfileBtn').addEventListener('click', saveProfileChanges);
+    }
+    
+    // Return the modal instance
+    return new bootstrap.Modal(document.getElementById('editProfileModal'));
+  }
+  
+  // Save profile changes
+  function saveProfileChanges() {
+    // Get values from form
+    const name = document.getElementById('profileName').value;
+    const username = document.getElementById('profileUsername').value;
+    const bio = document.getElementById('profileBio').value;
+    
+    // Get current profile data
+    const currentProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
+    
+    // Update profile data
+    const updatedProfile = {
+      ...currentProfile,
+      name,
+      username,
+      bio
+    };
+    
+    // Save to localStorage
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+    
+    // Update UI
+    profileName.textContent = name;
+    profileUsername.textContent = '@' + username;
+    profileBio.textContent = bio;
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+    modal.hide();
+    
+    // Show success message
+    alert('Profile updated successfully!');
+  }
+  
+  // Handle profile picture change
+  function handleProfilePictureChange() {
+    // Create file input element
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    
+    // Trigger click event
+    fileInput.click();
+    
+    // Handle file selection
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          // Update profile picture
+          profilePicture.src = e.target.result;
+          
+          // Get current profile data
+          const currentProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
+          
+          // Update profile data with new image URL
+          const updatedProfile = {
+            ...currentProfile,
+            profilePicUrl: e.target.result
+          };
+          
+          // Save to localStorage
+          localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+        };
+        
+        reader.readAsDataURL(this.files[0]);
+      }
+      
+      // Remove the file input
+      document.body.removeChild(fileInput);
+    });
+  }
+  
   // Add event listeners
   sidebarToggle.addEventListener('click', toggleSidebar);
   
   navDropdown.addEventListener('click', () => toggleSection(navDropdown, navSection));
   accountDropdown.addEventListener('click', () => toggleSection(accountDropdown, accountSection));
   helpDropdown.addEventListener('click', () => toggleSection(helpDropdown, helpSection));
+  
+  // Add edit profile button to the page
+  const profileInfo = document.querySelector('.profile-info');
+  if (profileInfo) {
+    const editButton = document.createElement('button');
+    editButton.className = 'btn btn-sm btn-outline-primary mt-2';
+    editButton.textContent = 'Edit Profile';
+    editButton.id = 'editProfileBtn';
+    profileInfo.appendChild(editButton);
+    
+    // Add event listener to edit button
+    editButton.addEventListener('click', function() {
+      const modal = createEditProfileModal();
+      modal.show();
+    });
+  }
+  
+  // Add event listener to change photo button
+  if (changePhotoBtn) {
+    changePhotoBtn.addEventListener('click', handleProfilePictureChange);
+  }
   
   // Logout button functionality
   const logoutButton = document.getElementById('logoutButton');
@@ -117,6 +297,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize sections
   initSections();
+  
+  // Load profile data
+  loadProfileData();
   
   // Handle window resize
   window.addEventListener('resize', function() {

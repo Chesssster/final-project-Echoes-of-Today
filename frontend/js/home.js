@@ -377,11 +377,99 @@ document.addEventListener('DOMContentLoaded', function() {
     journalModal.show();
   }
   
+  // Delete journal
+  function deleteJournalEntry(journalId) {
+    // Get journals from localStorage
+    let journals = getJournals();
+    const initialLength = journals.length;
+    
+    // Filter out the journal to delete
+    journals = journals.filter(journal => journal.id != journalId);
+    
+    // Check if a journal was actually removed
+    if (journals.length !== initialLength) {
+      // Save back to localStorage
+      localStorage.setItem('journals', JSON.stringify(journals));
+      // Refresh the display
+      displayJournals();
+      return true;
+    }
+    
+    return false;
+  }
+  
   // Open delete confirmation modal
   function openDeleteConfirmation(journalId) {
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     
     // Set up delete confirmation button
     confirmDeleteBtn.onclick = function() {
-      deleteJournal(journalId);
-      deleteConfirmModal.hide(); }}})
+      deleteJournalEntry(journalId);
+      deleteConfirmModal.hide();
+    };
+  }
+  
+  // Function to get journals from localStorage
+  function getJournals() {
+    return JSON.parse(localStorage.getItem('journals') || '[]');
+  }
+  
+  // Helper function to escape HTML
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+  
+  // Format date helper
+  function formatDate(date, includeTime = false) {
+    const options = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric'
+    };
+    
+    if (includeTime) {
+      options.hour = '2-digit';
+      options.minute = '2-digit';
+    }
+    
+    return date.toLocaleDateString('en-US', options);
+  }
+  
+  // Redirect to edit page
+  function redirectToEditPage(journalId) {
+    window.location.href = `write.html?id=${journalId}`;
+  }
+  
+  // Initialize the page
+  updateSidebarState();
+  window.addEventListener('resize', updateSidebarState);
+  displayJournals();
+});
+
+ // Logout functionality
+ document.getElementById('logoutButton').addEventListener('click', function(e) {
+  e.preventDefault();
+  // Show the logout modal instead of using confirm
+  const logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
+  logoutModal.show();
+});
+
+// Add event listener for the confirm logout button in the modal
+document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+  // Hide the modal
+  const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutConfirmModal'));
+  logoutModal.hide();
+  
+  // Display logout successful message
+  alert("Logged out successfully!");
+  
+  // Redirect to login page
+  window.location.href = 'index.html';
+});
