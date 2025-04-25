@@ -192,10 +192,15 @@ header {
 /* Sidebar Toggle Button */
 .sidebar-toggle-container {
   position: fixed;
+<<<<<<< HEAD
   top: 50%;
   transform: translateY(-50%);
   left: 250px;
   margin-left: -18px;
+=======
+  top: 80px;
+  left: 250px;
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
   z-index: 96;
   transition: left 0.3s ease;
 }
@@ -573,7 +578,11 @@ header {
   }
   
   .sidebar-toggle-container {
+<<<<<<< HEAD
     left: 200px;
+=======
+    left: 0;
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
   }
   
   .sidebar-hidden + .sidebar-toggle-container {

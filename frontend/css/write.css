@@ -220,6 +220,7 @@ header {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+<<<<<<< HEAD
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
   border: none;
@@ -230,6 +231,11 @@ header {
   transform: scale(1.05);
 }
 
+=======
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
 .sidebar-toggle-icon {
   position: relative;
   width: 16px;

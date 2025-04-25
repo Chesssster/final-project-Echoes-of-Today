@@ -236,12 +236,16 @@ header {
 
 .sidebar-toggle-icon {
   position: relative;
+<<<<<<< HEAD
   width: 16px;
   height: 16px;
+=======
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
 }
 
 .sidebar-toggle-icon span {
   position: absolute;
+<<<<<<< HEAD
   width: 16px;
   height: 2px;
   background-color: white;
@@ -253,6 +257,35 @@ header {
 .sidebar-toggle-icon span:nth-child(1) { top: 0; }
 .sidebar-toggle-icon span:nth-child(2) { top: 5px; }
 .sidebar-toggle-icon span:nth-child(3) { top: 10px; }
+=======
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle-icon span:nth-child(1) {
+  top: 0;
+}
+
+.sidebar-toggle-icon span:nth-child(2) {
+  top: 6px;
+}
+
+.sidebar-toggle-icon span:nth-child(3) {
+  top: 12px;
+}
+
+/* Animation for toggle button when sidebar is hidden */
+.sidebar-hidden ~ .sidebar-toggle-container .sidebar-toggle-icon span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.sidebar-hidden ~ .sidebar-toggle-container .sidebar-toggle-icon span:nth-child(2) {
+  opacity: 0;
+}
+
+.sidebar-hidden ~ .sidebar-toggle-container .sidebar-toggle-icon span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
 
 /* Community Card Styles */
 .community-cards {
