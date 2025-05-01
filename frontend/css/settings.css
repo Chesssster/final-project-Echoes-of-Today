@@ -207,20 +207,47 @@ header {
   top: 50%;
   transform: translateY(-50%);
   left: 250px;
+<<<<<<< HEAD
   margin-left: -18px;
   z-index: 96;
+=======
+<<<<<<< HEAD
+  margin-left: -18px;
+  z-index: 96;
+=======
+  margin-left: -22px; /* Half the width of the toggle button */
+  z-index: 99;
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
   transition: left 0.3s ease;
 }
 
 .sidebar-toggle {
+<<<<<<< HEAD
   width: 36px;
   height: 36px;
   background-color: var(--primary);
+=======
+<<<<<<< HEAD
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary);
+=======
+  width: 44px;
+  height: 44px;
+  background-color: white;
+  border: 1px solid #e4e6eb;
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
   border: none;
@@ -229,6 +256,8 @@ header {
 .sidebar-toggle:hover {
   background-color: var(--primary-dark);
   transform: scale(1.05);
+<<<<<<< HEAD
+=======
 }
 
 .sidebar-toggle-icon {
@@ -250,6 +279,45 @@ header {
 .sidebar-toggle-icon span:nth-child(1) { top: 0; }
 .sidebar-toggle-icon span:nth-child(2) { top: 5px; }
 .sidebar-toggle-icon span:nth-child(3) { top: 10px; }
+=======
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+}
+
+.sidebar-toggle-icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-toggle-icon span {
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background-color: white;
+  border-radius: 2px;
+  display: block;
+  transition: all 0.3s ease-in-out;
+}
+
+<<<<<<< HEAD
+.sidebar-toggle-icon span:nth-child(1) { top: 0; }
+.sidebar-toggle-icon span:nth-child(2) { top: 5px; }
+.sidebar-toggle-icon span:nth-child(3) { top: 10px; }
+=======
+.sidebar-toggle-icon span:nth-child(1) {
+  top: 0;
+}
+
+.sidebar-toggle-icon span:nth-child(2) {
+  top: 6px;
+}
+
+.sidebar-toggle-icon span:nth-child(3) {
+  top: 12px;
+}
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
 
 /* Form styles */
 .form-group {

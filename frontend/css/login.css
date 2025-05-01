@@ -16,6 +16,7 @@ body {
 input:focus {
   box-shadow: 0 0 0 3px rgba(74, 107, 175, 0.15);
   border-color: var(--primary, #3f51b5);
+<<<<<<< HEAD
 }
 
 /* Error styling for form validation - Google style */
@@ -46,6 +47,8 @@ input:focus {
   font-size: 0.9rem;
   margin-bottom: 20px;
   border-left: 4px solid #d93025;
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
 }
 
 /* Button hover effect */

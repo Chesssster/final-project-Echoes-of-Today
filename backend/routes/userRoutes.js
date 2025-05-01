@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+<<<<<<< HEAD
 const Journal = require('../models/Journal');
 const JournalImages = require('../models/JournalImages');
 const Sequence = require('../models/Sequence');
@@ -23,30 +24,43 @@ router.get('/check', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+=======
+const Sequence = require('../models/Sequence');
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
 
 // Create user
 router.post('/', async (req, res) => {
   try {
+<<<<<<< HEAD
     // Check if user already exists with this email
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
       return res.status(400).json({ message: 'A user with this email already exists' });
     }
     
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
     const sequenceDocument = await Sequence.findOneAndUpdate(
       { _id: 'userid' },
       { $inc: { sequence_value: 1 } },
       { new: true, upsert: true }
     );
+<<<<<<< HEAD
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
     const user = new User({
       _id: sequenceDocument.sequence_value,
       name: req.body.name,
       email: req.body.email,
+<<<<<<< HEAD
       password: hashedPassword,
+=======
+      password: req.body.password,
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
       role: req.body.role
     });
     await user.save();
@@ -62,6 +76,7 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+<<<<<<< HEAD
 // Get user profile with recent activity
 router.get('/profile/:id', async (req, res) => {
   try {
@@ -118,6 +133,8 @@ router.get('/profile/:id', async (req, res) => {
   }
 });
 
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
 // Update user
 router.put('/:id', async (req, res) => {
   try {
@@ -140,6 +157,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Login user
 router.post('/login', async (req, res) => {
   const { usernameOrEmail, password } = req.body;
@@ -189,4 +207,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
 module.exports = router;

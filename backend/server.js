@@ -15,6 +15,7 @@ app.use(cors({
   origin: 'http://localhost:5500', // Adjust if using a different port or domain
   credentials: true
 }));
+<<<<<<< HEAD
 
 // Increase JSON limit for handling images
 app.use(express.json({ limit: '50mb' }));
@@ -28,6 +29,13 @@ const journalImageRoutes = require('./routes/journalImageRoutes');
 app.use('/api/users', userRoutes);
 app.use('/api/journals', writeRoutes);
 app.use('/api/journal-images', journalImageRoutes);
+=======
+app.use(express.json());
+
+// Routes
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
 
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, '../frontend')));
