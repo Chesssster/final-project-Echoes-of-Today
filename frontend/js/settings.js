@@ -101,17 +101,17 @@ document.addEventListener('DOMContentLoaded', function() {
     darkModeToggle.checked = isDarkMode;
     document.body.classList.toggle('dark-mode', isDarkMode);
     
-    // Load other user settings (simulated)
-    document.getElementById('username').value = localStorage.getItem('username') || 'JohnDoe';
-    document.getElementById('email').value = localStorage.getItem('email') || 'john.doe@example.com';
-    document.getElementById('displayName').value = localStorage.getItem('displayName') || 'John Doe';
-    document.getElementById('bio').value = localStorage.getItem('bio') || 'I love journaling my daily experiences.';
-    
     // Set privacy level
-    document.getElementById('privacyLevel').value = localStorage.getItem('privacyLevel') || 'private';
+    const privacyLevel = document.getElementById('privacyLevel');
+    if (privacyLevel) {
+      privacyLevel.value = localStorage.getItem('privacyLevel') || 'private';
+    }
     
     // Set email notifications
-    document.getElementById('emailNotifications').checked = localStorage.getItem('emailNotifications') === 'true';
+    const emailNotifications = document.getElementById('emailNotifications');
+    if (emailNotifications) {
+      emailNotifications.checked = localStorage.getItem('emailNotifications') === 'true';
+    }
   }
 
   // Helper function to show notifications
@@ -133,16 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
   }
 
-  // Logout button
-  const logoutButton = document.getElementById('logoutButton');
-  logoutButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    // Simulate logout
-    showNotification('Logging out...');
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 1000);
-  });
+  // Logout button functionality removed - now handled by logout.js
 
   // Initialize
   loadUserSettings();

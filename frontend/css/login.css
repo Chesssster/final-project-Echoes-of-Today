@@ -1,24 +1,76 @@
 /* login.css */
 
+body {
+  background-color: var(--bg-light, #fafafa);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.card {
+  background-color: var(--bg-white, #fff);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  border: none;
+}
+
 /* Universal reset for inputs */
 input:focus {
-  box-shadow: none;
-  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(74, 107, 175, 0.15);
+  border-color: var(--primary, #3f51b5);
+}
+
+/* Error styling for form validation - Google style */
+.is-invalid {
+  border-color: #d93025 !important;
+  box-shadow: none !important;
+}
+
+.is-invalid:focus {
+  border-color: #d93025 !important;
+  box-shadow: 0 0 0 3px rgba(217, 48, 37, 0.15) !important;
+}
+
+.invalid-feedback {
+  color: #d93025;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  font-weight: 400;
+}
+
+/* Google-style alert */
+.alert-danger {
+  background-color: #fce8e6;
+  border-color: #fce8e6;
+  color: #d93025;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  border-left: 4px solid #d93025;
 }
 
 /* Button hover effect */
-.btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #004999;
+.btn-primary {
+  background-color: var(--primary, #3f51b5);
+  border-color: var(--primary, #3f51b5);
+  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--primary-dark, #303f9f);
+  border-color: var(--primary-dark, #303f9f);
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.10);
 }
 
 /* Auth form container tweaks */
 .form-container {
-  background-color: #ffffff;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
   margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 /* Divider with text */
@@ -39,37 +91,64 @@ input:focus {
 .divider span {
   padding: 0 10px;
   color: #6c757d;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 /* Social login buttons */
 .social-btn {
   width: 100%;
   text-align: center;
-  padding: 8px;
-  border-radius: 4px;
+  padding: 0.5rem;
+  border-radius: 50px;
+  background: #fff;
+  border: 1.5px solid #e4e6eb;
+  color: #212121;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  font-size: 1rem;
 }
 
-.social-btn:hover {
-  background-color: #f8f9fa;
+.social-btn svg {
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.social-btn:hover, .social-btn:focus {
+  background: #f5f7fa;
+  border-color: var(--primary, #3f51b5);
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.10);
+  color: #212121;
+}
+
+.social-btn:hover svg, .social-btn:focus svg {
+  filter: none;
 }
 
 /* Forgot password link */
 .forgot-password {
   color: #6c757d;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  transition: color 0.2s;
 }
 
 .forgot-password:hover {
-  color: #0d6efd;
+  color: var(--primary, #3f51b5);
   text-decoration: underline;
 }
 
 /* Improve form spacing on mobile */
 @media (max-width: 576px) {
-  .form-container {
+  .card {
     padding: 1.5rem;
-    margin-top: 1rem;
   }
+}
+
+input.form-control {
+  font-size: 1rem;
+  padding: 0.5rem;
 }

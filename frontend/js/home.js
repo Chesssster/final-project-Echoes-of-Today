@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Check if user is logged in
+  const checkAuth = () => {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      // Redirect to login if not logged in
+      window.location.href = 'login.html';
+      return null;
+    }
+    return JSON.parse(userData).user;
+  };
+  
+  // Initialize by checking authentication
+  const currentUser = checkAuth();
+  
+  // API endpoints
+  const API_BASE_URL = 'http://localhost:5000/api';
+  
   // Get references to elements
   const sidebar = document.getElementById('sidebar');
   const mainContent = document.getElementById('mainContent');
@@ -21,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const journalsPerPage = 9;
   let viewMode = 'grid';
   let sortMode = 'newest';
+  let journals = []; // Store journals data
   
   // Initialize sidebar state and toggle icon
   function updateSidebarState() {
@@ -131,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update dashboard stats
   function updateStats() {
-    const journals = getJournals();
     const totalEntriesElement = document.getElementById('totalEntries');
     const streakDaysElement = document.getElementById('streakDays');
     const lastActiveElement = document.getElementById('lastActive');
@@ -148,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update last active
     if (journals.length > 0) {
-      const latestDate = new Date(Math.max(...journals.map(j => new Date(j.date))));
+      const latestDate = new Date(Math.max(...journals.map(j => new Date(j.createdAt))));
       lastActiveElement.textContent = formatDate(latestDate, true);
     } else {
       lastActiveElement.textContent = '-';
@@ -161,14 +178,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Sort journals by date (newest first)
     const sortedJournals = [...journals].sort((a, b) => 
-      new Date(b.date) - new Date(a.date)
+      new Date(b.createdAt) - new Date(a.createdAt)
     );
     
     // Check if there's an entry today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    const latestDate = new Date(sortedJournals[0].date);
+    const latestDate = new Date(sortedJournals[0].createdAt);
     latestDate.setHours(0, 0, 0, 0);
     
     // If latest entry isn't from today or yesterday, streak is 0
@@ -182,18 +199,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Count consecutive days
     let streak = 1;
     let currentDate = latestDate;
+    let previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() - 1);
     
+    // Go through journals looking for consecutive days
     for (let i = 1; i < sortedJournals.length; i++) {
-      const journalDate = new Date(sortedJournals[i].date);
+      const journalDate = new Date(sortedJournals[i].createdAt);
       journalDate.setHours(0, 0, 0, 0);
       
-      const expectedDate = new Date(currentDate);
-      expectedDate.setDate(currentDate.getDate() - 1);
-      
-      if (journalDate.getTime() === expectedDate.getTime()) {
+      // If this journal was from the previous day, increment streak
+      if (journalDate.getTime() === previousDate.getTime()) {
         streak++;
         currentDate = journalDate;
+        previousDate = new Date(currentDate);
+        previousDate.setDate(currentDate.getDate() - 1);
+      } else if (journalDate.getTime() < previousDate.getTime()) {
+        // Skip older entries for the same day
+        continue;
       } else {
+        // Break streak
         break;
       }
     }
@@ -201,9 +225,36 @@ document.addEventListener('DOMContentLoaded', function() {
     return streak;
   }
   
+  // Fetch journals from the API
+  async function fetchJournals() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/journals/user/${currentUser.id}?userId=${currentUser.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch journals');
+      }
+      
+      journals = await response.json();
+      displayJournals();
+    } catch (error) {
+      console.error('Error fetching journals:', error);
+      // Show error message to user
+      journalsContainer.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          Failed to load journals. Please try again later.
+        </div>
+      `;
+      emptyState.style.display = 'none';
+    }
+  }
+  
   // Load and display journals
   function displayJournals() {
-    const journals = getJournals();
     const sortedJournals = sortJournals(journals, sortMode);
     
     // Update stats first
@@ -243,18 +294,20 @@ document.addEventListener('DOMContentLoaded', function() {
   function createJournalCard(journal) {
     const card = document.createElement('div');
     card.className = viewMode === 'grid' ? 'journal-card journal-card-grid' : 'journal-card journal-card-list';
-    card.dataset.id = journal.id;
+    card.dataset.id = journal._id;
     
     const previewText = journal.content.length > 150 
       ? journal.content.substring(0, 150) + '...'
       : journal.content;
     
+    const dateObj = new Date(journal.createdAt);
+    
     card.innerHTML = `
-      <div class="journal-header">
-        <h3 class="journal-title">${escapeHtml(journal.title)}</h3>
-        <div class="journal-date">${formatDate(new Date(journal.date))}</div>
-      </div>
-      <div class="journal-body">
+      <div class="journal-inner">
+        <div class="journal-header">
+          <h3 class="journal-title">${escapeHtml(journal.title)}</h3>
+          <div class="journal-date">${formatDate(dateObj)}</div>
+        </div>
         <p class="journal-preview">${escapeHtml(previewText)}</p>
       </div>
     `;
@@ -273,9 +326,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     switch (sortMethod) {
       case 'newest':
-        return sortedJournals.sort((a, b) => new Date(b.date) - new Date(a.date));
+        return sortedJournals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       case 'oldest':
-        return sortedJournals.sort((a, b) => new Date(a.date) - new Date(b.date));
+        return sortedJournals.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       case 'az':
         return sortedJournals.sort((a, b) => a.title.localeCompare(b.title));
       case 'za':
@@ -342,8 +395,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Open journal modal to view a journal
-  function openJournalModal(journal) {
-    currentJournalId = journal.id;
+  async function openJournalModal(journal) {
+    currentJournalId = journal._id;
     
     const modalTitle = document.getElementById('journalModalLabel');
     const modalBody = document.getElementById('journalModalBody');
@@ -351,51 +404,119 @@ document.addEventListener('DOMContentLoaded', function() {
     
     modalTitle.textContent = journal.title;
     
-    // Format content with proper paragraphs
-    const formattedContent = journal.content
-      .split('\n')
-      .map(paragraph => paragraph.trim())
-      .filter(paragraph => paragraph.length > 0)
-      .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
-      .join('');
+    // Show loading state in modal body
+    modalBody.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading content...</p></div>';
     
-    modalBody.innerHTML = formattedContent;
-    journalDate.textContent = formatDate(new Date(journal.date), true);
-    
-    // Set up edit button
-    document.getElementById('editJournalBtn').onclick = function() {
-      journalModal.hide();
-      redirectToEditPage(journal.id);
-    };
-    
-    // Set up delete button
-    document.getElementById('deleteJournalBtn').onclick = function() {
-      journalModal.hide();
-      openDeleteConfirmation(journal.id);
-    };
+    try {
+      console.log('Loading journal content and images for journal ID:', journal._id);
+      
+      // Fetch images for this journal
+      const imagesResponse = await fetch(`${API_BASE_URL}/journal-images/journal/${journal._id}?userId=${currentUser.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      let journalImages = [];
+      if (imagesResponse.ok) {
+        journalImages = await imagesResponse.json();
+        console.log('Fetched images:', journalImages.length);
+      } else {
+        console.error('Failed to fetch images:', await imagesResponse.text());
+      }
+      
+      // Format content with proper paragraphs
+      const formattedContent = journal.content
+        .split('\n')
+        .map(paragraph => paragraph.trim())
+        .filter(paragraph => paragraph.length > 0)
+        .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
+        .join('');
+      
+      // Prepare image gallery if there are images
+      let imageGallery = '';
+      if (journalImages && journalImages.length > 0) {
+        console.log('Creating image gallery with', journalImages.length, 'images');
+        imageGallery = `
+          <div class="journal-images mt-4 mb-3">
+            <h5>Attached Images (${journalImages.length})</h5>
+            <div class="image-gallery">
+              ${journalImages.map(img => `
+                <div class="image-item">
+                  <img src="${img.imageUrl}" alt="Journal Image" class="img-fluid rounded" 
+                       onerror="this.onerror=null; this.src='images/placeholder.png'; console.error('Failed to load image');">
+                  ${img.caption ? `<p class="image-caption">${escapeHtml(img.caption)}</p>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        console.log('No images found for this journal');
+      }
+      
+      // Combine content and images
+      modalBody.innerHTML = formattedContent + imageGallery;
+      
+      journalDate.textContent = formatDate(new Date(journal.createdAt), true);
+      
+      // Set up edit button
+      document.getElementById('editJournalBtn').onclick = function() {
+        journalModal.hide();
+        redirectToEditPage(journal._id);
+      };
+      
+      // Set up delete button
+      document.getElementById('deleteJournalBtn').onclick = function() {
+        journalModal.hide();
+        openDeleteConfirmation(journal._id);
+      };
+      
+    } catch (error) {
+      console.error('Error loading journal content:', error);
+      modalBody.innerHTML = `<div class="alert alert-danger">Failed to load journal content. Please try again.</div>`;
+    }
     
     journalModal.show();
   }
   
-  // Delete journal
-  function deleteJournalEntry(journalId) {
-    // Get journals from localStorage
-    let journals = getJournals();
-    const initialLength = journals.length;
-    
-    // Filter out the journal to delete
-    journals = journals.filter(journal => journal.id != journalId);
-    
-    // Check if a journal was actually removed
-    if (journals.length !== initialLength) {
-      // Save back to localStorage
-      localStorage.setItem('journals', JSON.stringify(journals));
-      // Refresh the display
-      displayJournals();
+  // Delete journal using API
+  async function deleteJournalEntry(journalId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/journals/${journalId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: currentUser.id
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete journal');
+      }
+      
+      const result = await response.json();
+      console.log('Delete result:', result);
+      
+      // Show success message if images were deleted
+      if (result.deletedImagesCount && result.deletedImagesCount > 0) {
+        console.log(`Deleted ${result.deletedImagesCount} associated images`);
+      }
+      
+      // Show success notification
+      showNotification('Journal deleted successfully', 'success');
+      
+      // Fetch journals again to refresh the list
+      await fetchJournals();
       return true;
+    } catch (error) {
+      console.error('Error deleting journal:', error);
+      showNotification('Failed to delete journal. Please try again.', 'error');
+      return false;
     }
-    
-    return false;
   }
   
   // Open delete confirmation modal
@@ -404,14 +525,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up delete confirmation button
     confirmDeleteBtn.onclick = function() {
-      deleteJournalEntry(journalId);
-      deleteConfirmModal.hide();
+      deleteJournalEntry(journalId).then(success => {
+        if (success) {
+          deleteConfirmModal.hide();
+        }
+      });
     };
-  }
-  
-  // Function to get journals from localStorage
-  function getJournals() {
-    return JSON.parse(localStorage.getItem('journals') || '[]');
+    
+    deleteConfirmModal.show();
   }
   
   // Helper function to escape HTML
@@ -444,32 +565,70 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Redirect to edit page
   function redirectToEditPage(journalId) {
+    // Store that we're in edit mode so the write page knows to load existing data
+    localStorage.setItem('editingJournal', 'true');
+    
+    // Navigate to the write page with the journal ID
     window.location.href = `write.html?id=${journalId}`;
+  }
+  
+  // Helper function to show notifications
+  function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+        <p>${message}</p>
+      </div>
+      <button class="notification-close">×</button>
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Show with animation
+    setTimeout(() => {
+      notification.classList.add('show');
+    }, 10);
+    
+    // Auto dismiss after 3 seconds
+    const dismissTimeout = setTimeout(() => {
+      dismissNotification(notification);
+    }, 3000);
+    
+    // Add dismiss button handler
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+      clearTimeout(dismissTimeout);
+      dismissNotification(notification);
+    });
+  }
+  
+  // Helper function to dismiss notifications
+  function dismissNotification(notification) {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
   }
   
   // Initialize the page
   updateSidebarState();
   window.addEventListener('resize', updateSidebarState);
-  displayJournals();
+  
+  // Add debugging logs
+  console.log("Current user:", currentUser);
+  
+  // Make sure we have a valid user before fetching journals
+  if (currentUser && currentUser.id) {
+    console.log("Fetching journals for user ID:", currentUser.id);
+    fetchJournals(); // Fetch journals from API
+  } else {
+    console.error("User not authenticated or missing ID");
+    // Redirect to login page
+    window.location.href = 'login.html';
+  }
 });
 
- // Logout functionality
- document.getElementById('logoutButton').addEventListener('click', function(e) {
-  e.preventDefault();
-  // Show the logout modal instead of using confirm
-  const logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
-  logoutModal.show();
-});
-
-// Add event listener for the confirm logout button in the modal
-document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
-  // Hide the modal
-  const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutConfirmModal'));
-  logoutModal.hide();
-  
-  // Display logout successful message
-  alert("Logged out successfully!");
-  
-  // Redirect to login page
-  window.location.href = 'index.html';
-});
+// Logout functionality removed - now handled by logout.js

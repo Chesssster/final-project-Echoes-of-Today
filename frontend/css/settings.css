@@ -207,50 +207,49 @@ header {
   top: 50%;
   transform: translateY(-50%);
   left: 250px;
-  margin-left: -22px; /* Half the width of the toggle button */
-  z-index: 99;
+  margin-left: -18px;
+  z-index: 96;
   transition: left 0.3s ease;
 }
 
 .sidebar-toggle {
-  width: 44px;
-  height: 44px;
-  background-color: white;
-  border: 1px solid #e4e6eb;
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: none;
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
 }
 
 .sidebar-toggle-icon {
-  width: 14px;
-  height: 14px;
   position: relative;
+  width: 16px;
+  height: 16px;
 }
 
 .sidebar-toggle-icon span {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background-color: #1c1c1c;
   position: absolute;
-  transition: all 0.3s ease;
+  width: 16px;
+  height: 2px;
+  background-color: white;
+  border-radius: 2px;
+  display: block;
+  transition: all 0.3s ease-in-out;
 }
 
-.sidebar-toggle-icon span:nth-child(1) {
-  top: 0;
-}
-
-.sidebar-toggle-icon span:nth-child(2) {
-  top: 6px;
-}
-
-.sidebar-toggle-icon span:nth-child(3) {
-  top: 12px;
-}
+.sidebar-toggle-icon span:nth-child(1) { top: 0; }
+.sidebar-toggle-icon span:nth-child(2) { top: 5px; }
+.sidebar-toggle-icon span:nth-child(3) { top: 10px; }
 
 /* Form styles */
 .form-group {
@@ -507,4 +506,71 @@ body.dark-mode .form-control::placeholder {
   .settings-card-body {
     padding: 15px;
   }
+}
+
+/* Logout Modal Styles */
+.logout-icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(63, 81, 181, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.animated-icon {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(0.95);
+  }
+}
+
+#logoutConfirmModal .modal-content {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+#logoutConfirmModal .btn {
+  border-radius: 30px;
+  padding: 12px 24px;
+  font-weight: 500;
+}
+
+#logoutConfirmModal .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#logoutConfirmModal .btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1050;
+  max-width: 350px;
+  opacity: 1;
+  transition: opacity 0.5s ease;
 }

@@ -124,17 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
         helpDropdown.addEventListener('click', () => toggleSection(helpDropdown, helpSection));
     }
     
-    // Logout functionality
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you want to log out?')) {
-                window.location.href = 'login.html';
-            }
-        });
-    }
-    
     // Form validation and submission
     if (contactForm) {
         contactForm.addEventListener('submit', function(event) {

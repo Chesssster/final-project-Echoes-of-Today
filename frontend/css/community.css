@@ -216,57 +216,43 @@ header {
 }
 
 .sidebar-toggle {
-  width: 44px;
-  height: 44px;
-  background-color: white;
-  border: 1px solid #e4e6eb;
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: none;
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
 }
 
 .sidebar-toggle-icon {
-  width: 14px;
-  height: 14px;
   position: relative;
+  width: 16px;
+  height: 16px;
 }
 
 .sidebar-toggle-icon span {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background-color: #1c1c1c;
   position: absolute;
-  transition: all 0.3s ease;
+  width: 16px;
+  height: 2px;
+  background-color: white;
+  border-radius: 2px;
+  display: block;
+  transition: all 0.3s ease-in-out;
 }
 
-.sidebar-toggle-icon span:nth-child(1) {
-  top: 0;
-}
-
-.sidebar-toggle-icon span:nth-child(2) {
-  top: 6px;
-}
-
-.sidebar-toggle-icon span:nth-child(3) {
-  top: 12px;
-}
-
-/* Animation for toggle button when sidebar is hidden */
-.sidebar-hidden ~ .sidebar-toggle-container .sidebar-toggle-icon span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-
-.sidebar-hidden ~ .sidebar-toggle-container .sidebar-toggle-icon span:nth-child(2) {
-  opacity: 0;
-}
-
-.sidebar-hidden ~ .sidebar-toggle-container .sidebar-toggle-icon span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-}
+.sidebar-toggle-icon span:nth-child(1) { top: 0; }
+.sidebar-toggle-icon span:nth-child(2) { top: 5px; }
+.sidebar-toggle-icon span:nth-child(3) { top: 10px; }
 
 /* Community Card Styles */
 .community-cards {

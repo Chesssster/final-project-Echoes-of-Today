@@ -5,6 +5,20 @@ document.addEventListener('DOMContentLoaded', function() {
   const sidebarToggleContainer = document.getElementById('sidebarToggleContainer');
   const sidebarToggleIcon = sidebarToggle.querySelector('.sidebar-toggle-icon');
   
+  // Check if user is logged in
+  const checkAuth = () => {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      // Redirect to login if not logged in
+      window.location.href = 'login.html';
+      return null;
+    }
+    return JSON.parse(userData).user;
+  };
+  
+  // Initialize by checking authentication
+  const currentUser = checkAuth();
+  
   sidebarToggle.addEventListener('click', function() {
     const isSidebarHidden = sidebar.classList.contains('sidebar-hidden');
     sidebar.classList.toggle('sidebar-hidden');
@@ -108,8 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
     handleFiles(this.files);
   });
   
+  // Track removed images
+  const removedImageIds = [];
+  
   // Process selected files
   function handleFiles(files) {
+    // Show the image upload container if it's hidden
+    if (imageUploadContainer.classList.contains('hidden')) {
+      imageUploadContainer.classList.remove('hidden');
+    }
+    
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
@@ -121,39 +143,44 @@ document.addEventListener('DOMContentLoaded', function() {
       const reader = new FileReader();
       
       reader.onload = function(e) {
-        // Create preview element
+        // Create preview element with the data URL
+        const imageDataUrl = e.target.result;
         const previewItem = document.createElement('div');
         previewItem.className = 'image-preview-item';
+        previewItem.dataset.imageData = imageDataUrl; // Store the image data URL as a data attribute
         previewItem.innerHTML = `
-          <img src="${e.target.result}" alt="Image Preview">
+          <img src="${imageDataUrl}" alt="Image Preview">
+          <div class="image-caption">
+            <input type="text" placeholder="Add a caption (optional)" class="form-control caption-input">
+          </div>
           <div class="remove-image">×</div>
         `;
         
         // Add remove functionality
         previewItem.querySelector('.remove-image').addEventListener('click', function() {
+          const imageId = previewItem.dataset.imageId;
+          if (imageId) {
+            removedImageIds.push(imageId);
+            console.log('Marked image for deletion:', imageId);
+          }
           previewItem.remove();
+          
+          // Check if there are no more images
+          checkEmptyImageContainer();
         });
         
         // Add to preview container
         imagePreviewContainer.appendChild(previewItem);
-        
-        // Insert image into textarea (in a real app, you might want to store the images and reference them)
-        const imageTag = `\n[Image: ${file.name}]\n`;
-        const textarea = document.getElementById('journalContent');
-        
-        // Insert at cursor position or at the end if no selection
-        if (textarea.selectionStart || textarea.selectionStart === 0) {
-          const startPos = textarea.selectionStart;
-          const endPos = textarea.selectionEnd;
-          textarea.value = textarea.value.substring(0, startPos) + imageTag + textarea.value.substring(endPos, textarea.value.length);
-          textarea.selectionStart = startPos + imageTag.length;
-          textarea.selectionEnd = startPos + imageTag.length;
-        } else {
-          textarea.value += imageTag;
-        }
       };
       
       reader.readAsDataURL(file);
+    }
+  }
+  
+  // Helper function to check if image container should be hidden
+  function checkEmptyImageContainer() {
+    if (imagePreviewContainer.children.length === 0) {
+      imageUploadContainer.classList.add('hidden');
     }
   }
   
@@ -236,6 +263,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // API endpoints
+  const API_BASE_URL = 'http://localhost:5000/api';
+  
   // Check if we're editing an existing journal
   const urlParams = new URLSearchParams(window.location.search);
   const journalId = urlParams.get('id');
@@ -243,11 +273,24 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // If we have an ID, load the journal for editing
   if (journalId) {
-    // Get journals from localStorage
-    const journals = JSON.parse(localStorage.getItem('journals') || '[]');
-    currentJournal = journals.find(journal => journal.id == journalId);
+    console.log('Editing journal with ID:', journalId);
     
-    if (currentJournal) {
+    // Get journal from API
+    fetch(`${API_BASE_URL}/journals/${journalId}?userId=${currentUser.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch journal');
+      }
+      return response.json();
+    })
+    .then(async journal => {
+      currentJournal = journal;
+      
       // Populate form fields
       document.getElementById('journalTitle').value = currentJournal.title;
       document.getElementById('journalContent').value = currentJournal.content;
@@ -260,73 +303,241 @@ document.addEventListener('DOMContentLoaded', function() {
       if (submitButton) {
         submitButton.textContent = 'Update Journal';
       }
-    }
+      
+      // Fetch existing images for this journal
+      try {
+        const imagesResponse = await fetch(`${API_BASE_URL}/journal-images/journal/${journalId}?userId=${currentUser.id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (imagesResponse.ok) {
+          const journalImages = await imagesResponse.json();
+          console.log('Loaded existing images:', journalImages.length);
+          
+          // Show the image upload container
+          if (journalImages.length > 0) {
+            imageUploadContainer.classList.remove('hidden');
+            
+            // Add each image to the preview container
+            journalImages.forEach(image => {
+              const previewItem = document.createElement('div');
+              previewItem.className = 'image-preview-item';
+              previewItem.dataset.imageData = image.imageUrl;
+              previewItem.dataset.imageId = image._id; // Store image ID for potential updates
+              previewItem.innerHTML = `
+                <img src="${image.imageUrl}" alt="Image Preview">
+                <div class="image-caption">
+                  <input type="text" placeholder="Add a caption (optional)" class="form-control caption-input" value="${image.caption || ''}">
+                </div>
+                <div class="remove-image">×</div>
+              `;
+              
+              // Add remove functionality
+              previewItem.querySelector('.remove-image').addEventListener('click', function() {
+                const imageId = previewItem.dataset.imageId;
+                if (imageId) {
+                  removedImageIds.push(imageId);
+                  console.log('Marked image for deletion:', imageId);
+                }
+                previewItem.remove();
+                
+                // Check if there are no more images
+                checkEmptyImageContainer();
+              });
+              
+              // Add to preview container
+              imagePreviewContainer.appendChild(previewItem);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error loading images:', error);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching journal:', error);
+      alert('Could not load journal entry. Please try again later.');
+      window.location.href = 'home.html';
+    });
   }
   
   // Form submission 
-  document.getElementById('writeForm').addEventListener('submit', function(e) {
+  document.getElementById('writeForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     // Get form values
     const title = document.getElementById('journalTitle').value;
     const content = document.getElementById('journalContent').value;
-    const date = new Date();
     
-    // Get existing journals from localStorage
-    let journals = JSON.parse(localStorage.getItem('journals') || '[]');
+    // Get image previews
+    const imagePreviews = imagePreviewContainer.querySelectorAll('.image-preview-item');
     
-    if (currentJournal) {
-      // Editing existing journal
-      const index = journals.findIndex(journal => journal.id == currentJournal.id);
+    // Show loading state
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Saving...';
+    
+    try {
+      let journalResponse;
+      let journalId;
       
-      if (index !== -1) {
-        // Update the existing journal
-        journals[index] = {
-          ...currentJournal,
-          title: title,
-          content: content,
-          updatedAt: date.toISOString()
-        };
+      if (currentJournal) {
+        // Update existing journal via API
+        journalResponse = await fetch(`${API_BASE_URL}/journals/${currentJournal._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title,
+            content,
+            userId: currentUser.id,
+            userName: currentUser.name
+          })
+        });
+        
+        if (!journalResponse.ok) {
+          throw new Error('Failed to update journal');
+        }
+        
+        const updatedJournal = await journalResponse.json();
+        journalId = currentJournal._id;
+        
+        console.log('Journal updated successfully:', updatedJournal);
+      } else {
+        // Create a new journal via API
+        journalResponse = await fetch(`${API_BASE_URL}/journals`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title,
+            content,
+            userId: currentUser.id,
+            userName: currentUser.name
+          })
+        });
+        
+        if (!journalResponse.ok) {
+          throw new Error('Failed to create journal');
+        }
+        
+        const newJournal = await journalResponse.json();
+        journalId = newJournal._id;
+        
+        console.log('Journal created successfully:', newJournal);
       }
-    } else {
-      // Create a new journal entry object
-      const journalEntry = {
-        id: Date.now(), // Use timestamp as a unique ID
-        title: title,
-        content: content,
-        date: date.toISOString(),
-        createdAt: date.toISOString()
-      };
       
-      // Add new entry
-      journals.push(journalEntry);
+      // Delete any images that were removed during editing
+      if (removedImageIds.length > 0) {
+        console.log(`Deleting ${removedImageIds.length} removed images`);
+        
+        for (const imageId of removedImageIds) {
+          try {
+            const deleteResponse = await fetch(`${API_BASE_URL}/journal-images/${imageId}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                userId: currentUser.id
+              })
+            });
+            
+            if (deleteResponse.ok) {
+              console.log(`Successfully deleted image: ${imageId}`);
+            } else {
+              console.error(`Failed to delete image: ${imageId}`);
+            }
+          } catch (deleteError) {
+            console.error(`Error deleting image ${imageId}:`, deleteError);
+          }
+        }
+      }
+      
+      // Save attached images if there are any
+      if (imagePreviews.length > 0) {
+        // Track successful image uploads
+        let successfulImageUploads = 0;
+        
+        for (const preview of imagePreviews) {
+          const imageUrl = preview.dataset.imageData;
+          const caption = preview.querySelector('.caption-input').value || '';
+          const imageId = preview.dataset.imageId || null; // Get existing image ID if available
+          
+          // Log image info for debugging
+          console.log('Processing image for journal:', journalId);
+          console.log('Caption:', caption);
+          console.log('Image URL length:', imageUrl ? imageUrl.length : 0);
+          console.log('Existing image ID:', imageId);
+          
+          try {
+            let imageResponse;
+            
+            if (imageId) {
+              // Update existing image caption if it has changed
+              imageResponse = await fetch(`${API_BASE_URL}/journal-images/${imageId}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  userId: currentUser.id,
+                  caption
+                })
+              });
+            } else {
+              // Save new image to JournalImages collection
+              imageResponse = await fetch(`${API_BASE_URL}/journal-images`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  journalId,
+                  userId: currentUser.id,
+                  userName: currentUser.name,
+                  journalTitle: title,
+                  imageUrl,
+                  caption
+                })
+              });
+            }
+            
+            if (!imageResponse.ok) {
+              const errorData = await imageResponse.json();
+              console.error('Failed to save image:', errorData);
+              throw new Error(`Failed to save image: ${errorData.message || 'Unknown error'}`);
+            } else {
+              console.log('Image saved successfully');
+              successfulImageUploads++;
+            }
+          } catch (imageError) {
+            console.error('Error during image save:', imageError);
+            // Continue trying to save other images even if one fails
+          }
+        }
+        
+        console.log(`Successfully processed ${successfulImageUploads} of ${imagePreviews.length} images`);
+      }
+      
+      // Show success message
+      alert('Journal saved successfully!');
+      
+      // Redirect to home page on success
+      window.location.href = 'home.html';
+    } catch (error) {
+      console.error('Error saving journal:', error);
+      alert('Failed to save journal. Please try again.');
+      
+      // Reset button state
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
     }
-    
-    // Save back to localStorage
-    localStorage.setItem('journals', JSON.stringify(journals));
-    
-    // Redirect to home page
-    window.location.href = 'home.html';
   });
-
-  // Logout functionality
- document.getElementById('logoutButton').addEventListener('click', function(e) {
-  e.preventDefault();
-  // Show the logout modal instead of using confirm
-  const logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
-  logoutModal.show();
-});
-
-// Add event listener for the confirm logout button in the modal
-document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
-  // Hide the modal
-  const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutConfirmModal'));
-  logoutModal.hide();
-  
-  // Display logout successful message
-  alert("Logged out successfully!");
-  
-  // Redirect to login page
-  window.location.href = 'index.html';
-});
 });

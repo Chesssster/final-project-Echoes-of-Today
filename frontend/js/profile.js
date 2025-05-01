@@ -21,7 +21,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const profilePicture = document.querySelector('.profile-picture img');
   const profileName = document.querySelector('.profile-info h3');
   const profileUsername = document.querySelector('.profile-info .text-muted');
+  const profileJoinDate = document.querySelector('.profile-info .mb-2');
   const profileBio = document.querySelector('.profile-bio');
+  
+  // Timeline element
+  const timelineContainer = document.querySelector('.timeline');
+  
+  // API Base URL
+  const API_BASE_URL = 'http://localhost:5000/api';
   
   // Check for saved sidebar state
   const sidebarHidden = localStorage.getItem('sidebarHidden') === 'true';
@@ -103,209 +110,176 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Load profile data
-  function loadProfileData() {
-    // In a real application, fetch this data from a server/API
-    // For now, we'll use localStorage
-    const profileData = JSON.parse(localStorage.getItem('userProfile')) || {
-      name: 'John Doe',
-      username: 'johndoe',
-      joined: 'April 2025',
-      bio: 'Nature enthusiast and amateur photographer. I journal daily to capture life\'s moments both big and small.',
-      profilePicUrl: 'https://via.placeholder.com/150'
-    };
-    
-    // Update profile elements with data
-    profileName.textContent = profileData.name;
-    profileUsername.textContent = '@' + profileData.username;
-    profileBio.textContent = profileData.bio;
-    
-    // Set profile picture if available
-    if (profileData.profilePicUrl) {
-      profilePicture.src = profileData.profilePicUrl;
+  // Check if user is logged in
+  function checkAuth() {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      // Redirect to login page if not logged in
+      window.location.href = 'login.html';
+      return null;
     }
-    
-    return profileData;
+    return JSON.parse(userData);
   }
   
-  // Create edit profile modal
-  function createEditProfileModal() {
-    // Get current profile data
-    const currentProfile = loadProfileData();
+  // Format date for display
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  }
+  
+  // Format time for display
+  function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+  
+  // Group activities by date
+  function groupActivitiesByDate(activities) {
+    const groups = {};
     
-    // Create modal if it doesn't exist
-    if (!document.getElementById('editProfileModal')) {
-      const modalHTML = `
-        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form id="profileEditForm">
-                  <div class="mb-3">
-                    <label for="profileName" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="profileName" value="${currentProfile.name}">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profileUsername" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="profileUsername" value="${currentProfile.username}">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profileBio" class="form-label">Bio</label>
-                    <textarea class="form-control" id="profileBio" rows="3">${currentProfile.bio}</textarea>
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+    activities.forEach(activity => {
+      const date = new Date(activity.date);
+      const dateKey = date.toDateString();
       
-      // Add modal to the page
-      document.body.insertAdjacentHTML('beforeend', modalHTML);
-      
-      // Add event listener to save button
-      document.getElementById('saveProfileBtn').addEventListener('click', saveProfileChanges);
-    }
-    
-    // Return the modal instance
-    return new bootstrap.Modal(document.getElementById('editProfileModal'));
-  }
-  
-  // Save profile changes
-  function saveProfileChanges() {
-    // Get values from form
-    const name = document.getElementById('profileName').value;
-    const username = document.getElementById('profileUsername').value;
-    const bio = document.getElementById('profileBio').value;
-    
-    // Get current profile data
-    const currentProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
-    
-    // Update profile data
-    const updatedProfile = {
-      ...currentProfile,
-      name,
-      username,
-      bio
-    };
-    
-    // Save to localStorage
-    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-    
-    // Update UI
-    profileName.textContent = name;
-    profileUsername.textContent = '@' + username;
-    profileBio.textContent = bio;
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
-    modal.hide();
-    
-    // Show success message
-    alert('Profile updated successfully!');
-  }
-  
-  // Handle profile picture change
-  function handleProfilePictureChange() {
-    // Create file input element
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
-    document.body.appendChild(fileInput);
-    
-    // Trigger click event
-    fileInput.click();
-    
-    // Handle file selection
-    fileInput.addEventListener('change', function() {
-      if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-          // Update profile picture
-          profilePicture.src = e.target.result;
-          
-          // Get current profile data
-          const currentProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
-          
-          // Update profile data with new image URL
-          const updatedProfile = {
-            ...currentProfile,
-            profilePicUrl: e.target.result
-          };
-          
-          // Save to localStorage
-          localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-        };
-        
-        reader.readAsDataURL(this.files[0]);
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
       }
       
-      // Remove the file input
-      document.body.removeChild(fileInput);
+      groups[dateKey].push(activity);
+    });
+    
+    return groups;
+  }
+  
+  // Get relative date label
+  function getRelativeDateLabel(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      // Format as MMM DD (e.g., Apr 18)
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  }
+  
+  // Load user profile data from API
+  async function loadProfileData() {
+    try {
+      // Get logged in user data
+      const userData = checkAuth();
+      if (!userData) return;
+      
+      // Show loading state
+      profileName.innerHTML = '<span class="placeholder col-7"></span>';
+      profileUsername.innerHTML = '<span class="placeholder col-4"></span>';
+      profileBio.innerHTML = '<span class="placeholder col-12"></span><span class="placeholder col-10"></span>';
+      timelineContainer.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div></div>';
+      
+      // Fetch profile data from API
+      const response = await fetch(`${API_BASE_URL}/users/profile/${userData.user.id}?userId=${userData.user.id}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile data');
+      }
+      
+      const data = await response.json();
+      
+      // Update profile UI with data
+      profileName.textContent = data.user.name;
+      profileUsername.textContent = `@${data.user.email.split('@')[0]}`;
+      profileJoinDate.textContent = `Joined ${formatDate(data.user.createdAt)}`;
+      
+      // Update profile bio if available or set default
+      profileBio.textContent = data.user.bio || 'No bio provided. Edit your profile to add a bio.';
+      
+      // Update recent activity timeline
+      updateActivityTimeline(data.recentActivity);
+      
+      return data;
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      // Show error message
+      timelineContainer.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          Failed to load profile data. Please refresh the page or try again later.
+        </div>
+      `;
+    }
+  }
+  
+  // Update activity timeline with data
+  function updateActivityTimeline(activities) {
+    if (!activities || activities.length === 0) {
+      timelineContainer.innerHTML = `
+        <div class="text-center p-4">
+          <p class="text-muted">No recent activity found.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Group activities by date
+    const groupedActivities = groupActivitiesByDate(activities);
+    
+    // Clear timeline
+    timelineContainer.innerHTML = '';
+    
+    // Create timeline items for each date group
+    Object.keys(groupedActivities).forEach(dateKey => {
+      const dateActivities = groupedActivities[dateKey];
+      const dateLabel = getRelativeDateLabel(dateActivities[0].date);
+      
+      // Add activities for this date
+      dateActivities.forEach(activity => {
+        const timelineItem = document.createElement('div');
+        timelineItem.className = 'timeline-item';
+        
+        const timelineDate = document.createElement('div');
+        timelineDate.className = 'timeline-date';
+        timelineDate.textContent = dateLabel;
+        
+        const timelineContent = document.createElement('div');
+        timelineContent.className = 'timeline-content';
+        
+        const activityContent = document.createElement('p');
+        const activityTime = document.createElement('small');
+        activityTime.className = 'text-muted';
+        activityTime.textContent = formatTime(activity.date);
+        
+        // Set content based on activity type
+        if (activity.type === 'journal') {
+          activityContent.innerHTML = `<strong>New Journal Entry:</strong> "${activity.title}"`;
+        } else if (activity.type === 'image') {
+          activityContent.innerHTML = `<strong>Added Image to:</strong> "${activity.journalTitle}"`;
+        }
+        
+        timelineContent.appendChild(activityContent);
+        timelineContent.appendChild(activityTime);
+        
+        timelineItem.appendChild(timelineDate);
+        timelineItem.appendChild(timelineContent);
+        
+        timelineContainer.appendChild(timelineItem);
+      });
     });
   }
   
-  // Add event listeners
+  // Event Listeners
   sidebarToggle.addEventListener('click', toggleSidebar);
-  
   navDropdown.addEventListener('click', () => toggleSection(navDropdown, navSection));
   accountDropdown.addEventListener('click', () => toggleSection(accountDropdown, accountSection));
   helpDropdown.addEventListener('click', () => toggleSection(helpDropdown, helpSection));
   
-  // Add edit profile button to the page
-  const profileInfo = document.querySelector('.profile-info');
-  if (profileInfo) {
-    const editButton = document.createElement('button');
-    editButton.className = 'btn btn-sm btn-outline-primary mt-2';
-    editButton.textContent = 'Edit Profile';
-    editButton.id = 'editProfileBtn';
-    profileInfo.appendChild(editButton);
-    
-    // Add event listener to edit button
-    editButton.addEventListener('click', function() {
-      const modal = createEditProfileModal();
-      modal.show();
-    });
-  }
-  
-  // Add event listener to change photo button
-  if (changePhotoBtn) {
-    changePhotoBtn.addEventListener('click', handleProfilePictureChange);
-  }
-  
-  // Logout button functionality
-  const logoutButton = document.getElementById('logoutButton');
-  if (logoutButton) {
-    logoutButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (confirm('Are you sure you want to log out?')) {
-        // Redirect to login page or perform logout
-        window.location.href = 'login.html';
-      }
-    });
-  }
-  
   // Initialize sections
   initSections();
   
-  // Load profile data
+  // Load profile data when page loads
   loadProfileData();
-  
-  // Handle window resize
-  window.addEventListener('resize', function() {
-    if (!sidebar.classList.contains('sidebar-hidden')) {
-      const sidebarWidth = getComputedStyle(sidebar).width;
-      sidebarToggleContainer.style.left = sidebarWidth;
-    }
-  });
 });

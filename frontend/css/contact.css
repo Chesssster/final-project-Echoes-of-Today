@@ -192,8 +192,10 @@ header {
 /* Sidebar Toggle Button */
 .sidebar-toggle-container {
   position: fixed;
-  top: 80px;
+  top: 50%;
+  transform: translateY(-50%);
   left: 250px;
+  margin-left: -18px;
   z-index: 96;
   transition: left 0.3s ease;
 }
@@ -571,7 +573,7 @@ header {
   }
   
   .sidebar-toggle-container {
-    left: 0;
+    left: 200px;
   }
   
   .sidebar-hidden + .sidebar-toggle-container {
@@ -599,4 +601,49 @@ header {
   .icon-container {
     font-size: 28px;
   }
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(to right, #4e73df, #36b9cc);
+}
+.animated-icon {
+  animation: pulse 1.5s infinite;
+  color: #4e73df;
+}
+.logout-icon-container {
+  background-color: rgba(78, 115, 223, 0.1);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+#logoutConfirmModal .modal-content {
+  border-radius: 15px;
+  overflow: hidden;
+}
+#logoutConfirmModal .btn {
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+#logoutConfirmModal .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+#logoutConfirmModal .btn-primary {
+  background: linear-gradient(to right, #4e73df, #36b9cc);
+  border: none;
 }
