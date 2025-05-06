@@ -27,7 +27,7 @@ A digital space for individuals to document and reflect on their daily lives, th
 - **Project Manager**: Jeric S. Base
 - **Front-end Developer**: Jeric S. Base
 - **Back-end Developer**: Jason Michael Lorente
-- **Database Manager**: Baby Jane Bajaro
+- **Database Manager**: Baby Jane Bajaro 
 - **Github Manager**: Earl Clester Barde
 - **Tester & Debugger**: Franco B. Marcelo
 
@@ -41,7 +41,7 @@ A digital space for individuals to document and reflect on their daily lives, th
 
 - **Phase 1 (Week 11)**: 100%
 - **Phase 2 (Week 12)**: 90%
-- **Phase 3 (Week 13)**: 60%
-- **Phase 4 (Week 14)**: 20%
-- **Phase 5 (Week 15)**:
+- **Phase 3 (Week 13)**: 80%
+- **Phase 4 (Week 14)**: 90%
+- **Phase 5 (Week 15)**: 70%
 - **Phase 6 (Week 16)**:
