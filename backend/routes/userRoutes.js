@@ -1,11 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 const Journal = require('../models/Journal');
 const JournalImages = require('../models/JournalImages');
 const Sequence = require('../models/Sequence');
 const bcrypt = require('bcrypt');
+<<<<<<< HEAD
 const passport = require('../config/passport');
+=======
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
 // Check if user email already exists
 router.get('/check', async (req, res) => {
@@ -24,6 +31,7 @@ router.get('/check', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+<<<<<<< HEAD
 
 // Google OAuth Routes
 router.get('/google', 
@@ -49,30 +57,61 @@ router.get('/google/callback',
     res.redirect(`/login-success.html?user=${encodeURIComponent(JSON.stringify(user))}`);
   }
 );
+=======
+=======
+const Sequence = require('../models/Sequence');
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
 // Create user
 router.post('/', async (req, res) => {
   try {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
     // Check if user already exists with this email
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
       return res.status(400).json({ message: 'A user with this email already exists' });
     }
     
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
     const sequenceDocument = await Sequence.findOneAndUpdate(
       { _id: 'userid' },
       { $inc: { sequence_value: 1 } },
       { new: true, upsert: true }
     );
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
     const user = new User({
       _id: sequenceDocument.sequence_value,
       name: req.body.name,
       email: req.body.email,
+<<<<<<< HEAD
       password: hashedPassword,
+=======
+<<<<<<< HEAD
+      password: hashedPassword,
+=======
+      password: req.body.password,
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
       role: req.body.role
     });
     await user.save();
@@ -88,6 +127,10 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 // Get user profile with recent activity
 router.get('/profile/:id', async (req, res) => {
   try {
@@ -144,6 +187,11 @@ router.get('/profile/:id', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 // Update user
 router.put('/:id', async (req, res) => {
   try {
@@ -166,6 +214,10 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 // Login user
 router.post('/login', async (req, res) => {
   const { usernameOrEmail, password } = req.body;
@@ -215,4 +267,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 module.exports = router;

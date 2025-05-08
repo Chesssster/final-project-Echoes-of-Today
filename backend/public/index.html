@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Sports Cars</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+</head>    
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1 class="text-center text-white py-3" style="background-color: #000;">Ultimate Sports Cars</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">Ultimate Sports Car</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>           
+    </header>
+
+    <!-- Hero Carousel Section -->
+    <main>
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="porsche-911-gt3-rs-carrera-rs-2-7-tribute.jpg" class="d-block w-100" alt="Porsche 911 GT3 RS">
+                    <div class="carousel-caption">
+                        <section id="hero">
+                            <h3>Experience the Porsche 911</h3>
+                            <p>Unleash the power on the open road</p>
+                        </section>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="porsche-911-gt3-rs-carrera-rs-2-7-tribute-3.jpg" class="d-block w-100" alt="Porsche 911 Image 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="porsche-911-gt3-rs-carrera.jpg" class="d-block w-100" alt="Porsche 911 Image 3">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+
+        <!-- Featured Models Section -->
+        <section id="models" class="container mt-5">
+            <h2 class="text-center mb-4">Our Featured Sports Cars</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="model">
+                        <img src="porsche-911.jpg" alt="Porsche 911" class="img-fluid rounded">
+                        <p class="mt-2">The legendary Porsche 911 – a true icon of speed and performance.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="model">
+                        <img src="porsche-cayman.jpg" alt="Porsche Cayman" class="img-fluid rounded">
+                        <p class="mt-2">Explore the Porsche Cayman – designed for precision and thrill.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="container mt-5">
+            <h1 class="text-center">About Us</h1>
+            <p>We are passionate about creating the ultimate sports cars that blend cutting-edge technology with classic performance. Our cars are engineered for those who demand power, precision, and an exhilarating driving experience.</p>
+            <h2>Our Mission</h2>
+            <p>To craft sports cars that excite, perform, and turn heads. We specialize in Porsche-inspired engineering, delivering cars designed for enthusiasts who crave the thrill of the road.</p>
+        </section>
+
+        <!-- Services Section -->
+        <section class="container mt-5">
+            <h1 class="text-center mb-4">Our Services</h1>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="painting cars.webp" class="card-img-top" alt="Custom Car Design">
+                        <div class="card-body">
+                            <h5 class="card-title">Custom Car Design</h5>
+                            <p class="card-text">Design your dream car with us. We offer bespoke customization for sports car enthusiasts.</p>
+                            <a href="#" class="btn btn-primary">Discover More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="tuning.webp" class="card-img-top" alt="Performance Tuning">
+                        <div class="card-body">
+                            <h5 class="card-title">Performance Tuning</h5>
+                            <p class="card-text">Unlock the full potential of your car with our professional tuning services.</p>
+                            <a href="#" class="btn btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="car-repair.webp" class="card-img-top" alt="Car Maintenance & Repairs">
+                        <div class="card-body">
+                            <h5 class="card-title">Car Maintenance & Repairs</h5>
+                            <p class="card-text">Keep your car in top condition with our expert repair and maintenance services.</p>
+                            <a href="#" class="btn btn-primary">Get Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>About Us</h5>
+                    <p>We create custom, high-performance sports cars that redefine driving pleasure.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Home</a></li>
+                        <li><a href="#" class="text-white">Services</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center mb-3">
+                    <h5>Follow Us</h5>
+                    <a href="#" class="text-white me-2">Facebook</a>
+                    <a href="#" class="text-white me-2">Twitter</a>
+                    <a href="#" class="text-white">Instagram</a>
+                </div>
+            </div>
+            <hr>
+            <p class="text-center">&copy; 2025 Ultimate Sports Cars | All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+</html>

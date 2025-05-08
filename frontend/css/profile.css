@@ -325,6 +325,23 @@ header {
   margin-bottom: 15px;
   border: 3px solid var(--primary-light);
   box-shadow: var(--shadow-sm);
+<<<<<<< HEAD
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+=======
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .profile-picture img {

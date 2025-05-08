@@ -220,6 +220,7 @@ header {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+<<<<<<< HEAD
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
   border: none;
@@ -228,8 +229,30 @@ header {
 .sidebar-toggle:hover {
   background-color: var(--primary-dark);
   transform: scale(1.05);
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: none;
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 }
 
+.sidebar-toggle:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
+<<<<<<< HEAD
+=======
+}
+
+=======
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+}
+
+>>>>>>> 53decd297a9b781ef4866b13b1fa679fc3782829
 .sidebar-toggle-icon {
   position: relative;
   width: 16px;
@@ -429,18 +452,45 @@ header {
 /* Toolbar styling */
 .toolbar {
   display: flex;
+<<<<<<< HEAD
   align-items: center;
   justify-content: flex-start;
   padding: 0;
   background-color: transparent;
   border-radius: 8px;
+=======
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
   margin-bottom: 10px;
 }
 
 .toolbar button {
+<<<<<<< HEAD
   display: inline-flex;
   align-items: center;
   justify-content: center;
+=======
+  background: none;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #495057;
+  transition: all 0.2s ease;
+}
+
+.toolbar button:hover {
+  background-color: #e9ecef;
+  color: var(--primary);
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 }
 
 /* Content area */

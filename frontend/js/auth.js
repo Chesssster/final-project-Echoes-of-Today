@@ -149,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = signupForm.querySelector("input[placeholder='Password']").value;
       const confirmPassword = signupForm.querySelector("input[placeholder='Confirm Password']").value;
 
+<<<<<<< HEAD
       // Check if passwords match
       if (password !== confirmPassword) {
         // Create error alert at top of form
@@ -217,6 +218,46 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ name: username, email, password, role: 'user' })
         });
 
+=======
+      try {
+        // First check if account exists
+        const checkResponse = await fetch(`http://localhost:5000/api/users/check?email=${encodeURIComponent(email)}`);
+        const checkData = await checkResponse.json();
+        
+        if (checkResponse.ok && checkData.exists) {
+          // Email already exists - highlight the email field and show error
+          const emailInput = signupForm.querySelector("input[placeholder='Email']");
+          emailInput.classList.add('is-invalid');
+          
+          const formGroup = emailInput.closest('.mb-3');
+          if (formGroup) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback';
+            errorDiv.textContent = 'This email is already associated with an account';
+            formGroup.appendChild(errorDiv);
+          }
+          
+          // Create error alert at top of form
+          const errorAlert = document.createElement('div');
+          errorAlert.className = 'alert alert-danger mb-3';
+          errorAlert.role = 'alert';
+          errorAlert.textContent = 'An account with this email already exists';
+          signupForm.insertBefore(errorAlert, signupForm.firstChild);
+          
+          // Reset button state
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+          return;
+        }
+        
+        // If email is available, proceed with signup
+        const response = await fetch('http://localhost:5000/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: username, email, password, role: 'user' })
+        });
+
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
         if (response.ok) {
           const userData = await response.json();
           

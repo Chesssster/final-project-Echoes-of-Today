@@ -1,0 +1,105 @@
+/* General Page Background and Text */
+body {
+    background-color: #1c1c1c; /* Dark background for a sleek car vibe */
+    color: #ecf0f1; /* Light gray text for contrast */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #000000; /* Black background for the navbar */
+}
+
+.navbar-brand {
+    color: #f39c12; /* Racing yellow for the brand name */
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: #ecf0f1; /* Light gray for nav links */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #e74c3c; /* Red on hover for a sporty effect */
+}
+
+/* Footer */
+footer {
+    background-color: #000000; /* Black footer for contrast */
+    color: #ecf0f1; /* Light gray text */
+}
+
+footer a {
+    color: #ecf0f1;
+}
+
+footer a:hover {
+    color: #e74c3c; /* Red hover effect */
+}
+
+/* Card Design (for services) */
+.card {
+    background-color: #2c3e50; /* Slightly lighter dark background */
+    border: none;
+    border-radius: 10px;
+}
+
+.card-title {
+    color: #f39c12; /* Bright yellow for card titles */
+}
+
+.card-text {
+    color: #ecf0f1; /* Light gray for card text */
+}
+
+.card .btn-primary {
+    background-color: #e74c3c; /* Racing red button */
+    border-color: #e74c3c;
+}
+
+.card .btn-primary:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Social Media Icons (Footer) */
+footer .text-white {
+    font-size: 18px;
+}
+
+footer i {
+    color: #ecf0f1;
+    font-size: 24px;
+    transition: color 0.3s ease-in-out;
+}
+
+footer i:hover {
+    color: #e74c3c; /* Red hover effect for icons */
+}
+
+/* Section Headers (e.g., About, Services, Contact) */
+section h1, section h2 {
+    color: #f39c12; /* Bright yellow for section headers */
+    font-weight: bold;
+}
+
+/* Buttons (for consistency) */
+.btn-primary {
+    background-color: #e74c3c; /* Red buttons for action */
+    border-color: #e74c3c;
+}
+
+.btn-primary:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Form Inputs (Contact Form) */
+input, textarea, .form-control {
+    background-color: #34495e; /* Dark gray background for form elements */
+    color: #ecf0f1; /* Light gray text */
+    border: 1px solid #bdc3c7; /* Silver border for input fields */
+}
+
+input:focus, textarea:focus {
+    border-color: #f39c12; /* Yellow border on focus */
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.5); /* Yellow glow on focus */
+}

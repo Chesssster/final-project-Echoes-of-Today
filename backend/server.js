@@ -4,8 +4,11 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+<<<<<<< HEAD
 const session = require('express-session');
 const passport = require('./config/passport');
+=======
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
 const app = express();
 
@@ -14,6 +17,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
+<<<<<<< HEAD
   origin: 'http://localhost:5000', // Adjust if using a different port or domain
   credentials: true
 }));
@@ -32,6 +36,12 @@ app.use(session({
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+=======
+  origin: 'http://localhost:5500', // Adjust if using a different port or domain
+  credentials: true
+}));
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
 // Increase JSON limit for handling images
 app.use(express.json({ limit: '50mb' }));
@@ -41,12 +51,25 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 const userRoutes = require('./routes/userRoutes');
 const writeRoutes = require('./routes/writeRoutes');
 const journalImageRoutes = require('./routes/journalImageRoutes');
+<<<<<<< HEAD
 const profilePictureRoutes = require('./routes/profilePictureRoutes');
+=======
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
 app.use('/api/users', userRoutes);
 app.use('/api/journals', writeRoutes);
 app.use('/api/journal-images', journalImageRoutes);
+<<<<<<< HEAD
 app.use('/api/profile-pictures', profilePictureRoutes);
+=======
+=======
+app.use(express.json());
+
+// Routes
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, '../frontend')));

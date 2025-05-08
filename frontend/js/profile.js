@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchUserActivity();
   }
   
+<<<<<<< HEAD
   // Fetch profile picture
   async function fetchProfilePicture() {
     try {
@@ -226,16 +227,151 @@ document.addEventListener('DOMContentLoaded', function() {
       const activitiesForDate = groupedActivities[date];
       
       activitiesForDate.forEach(activity => {
+=======
+  // Check if user is logged in
+  function checkAuth() {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      // Redirect to login page if not logged in
+      window.location.href = 'login.html';
+      return null;
+    }
+    return JSON.parse(userData);
+  }
+  
+  // Format date for display
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  }
+  
+  // Format time for display
+  function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+  
+  // Group activities by date
+  function groupActivitiesByDate(activities) {
+    const groups = {};
+    
+    activities.forEach(activity => {
+      const date = new Date(activity.date);
+      const dateKey = date.toDateString();
+      
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      
+      groups[dateKey].push(activity);
+    });
+    
+    return groups;
+  }
+  
+  // Get relative date label
+  function getRelativeDateLabel(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      // Format as MMM DD (e.g., Apr 18)
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  }
+  
+  // Load user profile data from API
+  async function loadProfileData() {
+    try {
+      // Get logged in user data
+      const userData = checkAuth();
+      if (!userData) return;
+      
+      // Show loading state
+      profileName.innerHTML = '<span class="placeholder col-7"></span>';
+      profileUsername.innerHTML = '<span class="placeholder col-4"></span>';
+      profileBio.innerHTML = '<span class="placeholder col-12"></span><span class="placeholder col-10"></span>';
+      timelineContainer.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div></div>';
+      
+      // Fetch profile data from API
+      const response = await fetch(`${API_BASE_URL}/users/profile/${userData.user.id}?userId=${userData.user.id}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile data');
+      }
+      
+      const data = await response.json();
+      
+      // Update profile UI with data
+      profileName.textContent = data.user.name;
+      profileUsername.textContent = `@${data.user.email.split('@')[0]}`;
+      profileJoinDate.textContent = `Joined ${formatDate(data.user.createdAt)}`;
+      
+      // Update profile bio if available or set default
+      profileBio.textContent = data.user.bio || 'No bio provided. Edit your profile to add a bio.';
+      
+      // Update recent activity timeline
+      updateActivityTimeline(data.recentActivity);
+      
+      return data;
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      // Show error message
+      timelineContainer.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          Failed to load profile data. Please refresh the page or try again later.
+        </div>
+      `;
+    }
+  }
+  
+  // Update activity timeline with data
+  function updateActivityTimeline(activities) {
+    if (!activities || activities.length === 0) {
+      timelineContainer.innerHTML = `
+        <div class="text-center p-4">
+          <p class="text-muted">No recent activity found.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Group activities by date
+    const groupedActivities = groupActivitiesByDate(activities);
+    
+    // Clear timeline
+    timelineContainer.innerHTML = '';
+    
+    // Create timeline items for each date group
+    Object.keys(groupedActivities).forEach(dateKey => {
+      const dateActivities = groupedActivities[dateKey];
+      const dateLabel = getRelativeDateLabel(dateActivities[0].date);
+      
+      // Add activities for this date
+      dateActivities.forEach(activity => {
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
         const timelineItem = document.createElement('div');
         timelineItem.className = 'timeline-item';
         
         const timelineDate = document.createElement('div');
         timelineDate.className = 'timeline-date';
+<<<<<<< HEAD
         timelineDate.textContent = date;
+=======
+        timelineDate.textContent = dateLabel;
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
         
         const timelineContent = document.createElement('div');
         timelineContent.className = 'timeline-content';
         
+<<<<<<< HEAD
         const activityTitle = document.createElement('p');
         
         if (activity.type === 'journal') {
@@ -249,6 +385,21 @@ document.addEventListener('DOMContentLoaded', function() {
         activityTime.textContent = formatTime(new Date(activity.date));
         
         timelineContent.appendChild(activityTitle);
+=======
+        const activityContent = document.createElement('p');
+        const activityTime = document.createElement('small');
+        activityTime.className = 'text-muted';
+        activityTime.textContent = formatTime(activity.date);
+        
+        // Set content based on activity type
+        if (activity.type === 'journal') {
+          activityContent.innerHTML = `<strong>New Journal Entry:</strong> "${activity.title}"`;
+        } else if (activity.type === 'image') {
+          activityContent.innerHTML = `<strong>Added Image to:</strong> "${activity.journalTitle}"`;
+        }
+        
+        timelineContent.appendChild(activityContent);
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
         timelineContent.appendChild(activityTime);
         
         timelineItem.appendChild(timelineDate);
@@ -259,6 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+<<<<<<< HEAD
   // Helper function to group activities by date
   function groupActivitiesByDate(activities) {
     const grouped = {};
@@ -298,4 +450,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize the page
   loadUserProfile();
+=======
+  // Event Listeners
+  sidebarToggle.addEventListener('click', toggleSidebar);
+  navDropdown.addEventListener('click', () => toggleSection(navDropdown, navSection));
+  accountDropdown.addEventListener('click', () => toggleSection(accountDropdown, accountSection));
+  helpDropdown.addEventListener('click', () => toggleSection(helpDropdown, helpSection));
+  
+  // Initialize sections
+  initSections();
+  
+  // Load profile data when page loads
+  loadProfileData();
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 });

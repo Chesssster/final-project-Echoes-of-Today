@@ -17,6 +17,10 @@ input:focus {
   border-color: var(--primary, #3f51b5);
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 /* Error styling for form validation - Google style */
 .is-invalid {
   border-color: #d93025 !important;
@@ -47,6 +51,11 @@ input:focus {
   border-left: 4px solid #d93025;
 }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 2ba22d2ef45603f46e7b700ccae696117d2ae68f
+>>>>>>> b90847c56d71a5980b48ee4cfbeb27ea85806841
 .btn-primary {
   background-color: var(--primary, #3f51b5);
   border-color: var(--primary, #3f51b5);
