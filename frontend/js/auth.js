@@ -1,6 +1,22 @@
 // auth.js
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Check for login errors
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('error')) {
+    const errorType = urlParams.get('error');
+    if (errorType === 'authentication') {
+      const form = document.getElementById('loginForm') || document.getElementById('signupForm');
+      if (form) {
+        const errorAlert = document.createElement('div');
+        errorAlert.className = 'alert alert-danger mb-3';
+        errorAlert.role = 'alert';
+        errorAlert.textContent = "Authentication failed. Please try again.";
+        form.insertBefore(errorAlert, form.firstChild);
+      }
+    }
+  }
+
   // Login form handling
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
@@ -131,6 +147,37 @@ document.addEventListener("DOMContentLoaded", () => {
       const username = signupForm.querySelector("input[placeholder='Username']").value;
       const email = signupForm.querySelector("input[placeholder='Email']").value;
       const password = signupForm.querySelector("input[placeholder='Password']").value;
+      const confirmPassword = signupForm.querySelector("input[placeholder='Confirm Password']").value;
+
+      // Check if passwords match
+      if (password !== confirmPassword) {
+        // Create error alert at top of form
+        const errorAlert = document.createElement('div');
+        errorAlert.className = 'alert alert-danger mb-3';
+        errorAlert.role = 'alert';
+        errorAlert.textContent = "Passwords do not match";
+        signupForm.insertBefore(errorAlert, signupForm.firstChild);
+        
+        // Highlight password fields
+        const passwordInput = signupForm.querySelector("input[placeholder='Password']");
+        const confirmPasswordInput = signupForm.querySelector("input[placeholder='Confirm Password']");
+        passwordInput.classList.add('is-invalid');
+        confirmPasswordInput.classList.add('is-invalid');
+        
+        // Add error message under confirm password field
+        const formGroup = confirmPasswordInput.closest('.mb-3');
+        if (formGroup) {
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'invalid-feedback';
+          errorDiv.textContent = 'Passwords do not match';
+          formGroup.appendChild(errorDiv);
+        }
+        
+        // Reset button state
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+        return;
+      }
 
       try {
         // First check if account exists
@@ -248,11 +295,14 @@ document.addEventListener("DOMContentLoaded", () => {
     button.addEventListener("click", (e) => {
       e.preventDefault();
       const socialPlatform = button.textContent.includes("Google") ? "Google" : "Facebook";
-      console.log(`${socialPlatform} authentication initiated`);
       
-      // Simulate OAuth authentication process
-      alert(`${socialPlatform} authentication would occur here.`);
-      // This is where you'd implement OAuth flow with your chosen provider
+      if (socialPlatform === "Google") {
+        // Redirect to Google OAuth endpoint
+        window.location.href = 'http://localhost:5000/api/users/google';
+      } else {
+        // Show message for Facebook (not implemented)
+        alert(`${socialPlatform} authentication not implemented yet.`);
+      }
     });
   });
 });

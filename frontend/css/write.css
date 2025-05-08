@@ -429,31 +429,18 @@ header {
 /* Toolbar styling */
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  padding: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  background-color: transparent;
   border-radius: 8px;
-  background-color: #f8f9fa;
   margin-bottom: 10px;
 }
 
 .toolbar button {
-  background: none;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  width: 32px;
-  height: 32px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: #495057;
-  transition: all 0.2s ease;
-}
-
-.toolbar button:hover {
-  background-color: #e9ecef;
-  color: var(--primary);
 }
 
 /* Content area */
@@ -553,4 +540,18 @@ header {
 #logoutConfirmModal .btn-primary {
   background: linear-gradient(to right, #4e73df, #36b9cc);
   border: none;
+}
+
+/* Add button specific styles */
+#insertImageBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-right: 0;
+  min-width: 140px;
+}
+
+#insertImageBtn i {
+  margin-right: 8px;
 }

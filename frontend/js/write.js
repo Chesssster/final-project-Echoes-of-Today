@@ -80,10 +80,17 @@ document.addEventListener('DOMContentLoaded', function() {
   // Toggle image upload container visibility
   insertImageBtn.addEventListener('click', function() {
     imageUploadContainer.classList.toggle('hidden');
+    
+    // If container was hidden and now visible, scroll to it
+    if (!imageUploadContainer.classList.contains('hidden')) {
+      imageUploadContainer.scrollIntoView({ behavior: 'smooth' });
+    }
   });
   
   // Trigger file input when browse button is clicked
-  browseImagesBtn.addEventListener('click', function() {
+  browseImagesBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     imageUpload.click();
   });
   
@@ -112,14 +119,16 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Click to browse files
   imageUploadContainer.addEventListener('click', function(e) {
-    if (e.target !== browseImagesBtn && !e.target.closest('.image-preview-item')) {
+    if (e.target !== browseImagesBtn && !e.target.closest('.image-preview-item') && !e.target.closest('button')) {
       imageUpload.click();
     }
   });
   
   // Handle file selection
   imageUpload.addEventListener('change', function() {
-    handleFiles(this.files);
+    if (this.files && this.files.length > 0) {
+      handleFiles(this.files);
+    }
   });
   
   // Track removed images

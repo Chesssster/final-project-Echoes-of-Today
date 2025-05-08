@@ -5,6 +5,7 @@ const Journal = require('../models/Journal');
 const JournalImages = require('../models/JournalImages');
 const Sequence = require('../models/Sequence');
 const bcrypt = require('bcrypt');
+const passport = require('../config/passport');
 
 // Check if user email already exists
 router.get('/check', async (req, res) => {
@@ -23,6 +24,31 @@ router.get('/check', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// Google OAuth Routes
+router.get('/google', 
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+  })
+);
+
+router.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    // Successful authentication
+    // Create a user object to return that matches our regular login format
+    const user = {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role
+    };
+    
+    // Redirect to frontend with user data
+    res.redirect(`/login-success.html?user=${encodeURIComponent(JSON.stringify(user))}`);
+  }
+);
 
 // Create user
 router.post('/', async (req, res) => {

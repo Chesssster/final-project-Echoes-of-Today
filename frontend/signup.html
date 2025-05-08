@@ -41,7 +41,12 @@
               <input type="password" id="signupPassword" name="password" class="form-control form-control-lg" placeholder="Password" required />
             </div>
             
-            <button type="submit" class="btn btn-primary w-100 mb-3 rounded-pill fw-semibold" style="font-size: 1.1rem;">Sign Up</button>
+            <div class="mb-3">
+              <input type="password" id="confirmPassword" name="confirmPassword" class="form-control form-control-lg" placeholder="Confirm Password" required />
+              <div class="invalid-feedback" id="passwordMatchError">Passwords do not match</div>
+            </div>
+            
+            <button type="submit" id="signupButton" class="btn btn-primary w-100 mb-3 rounded-pill fw-semibold" style="font-size: 1.1rem;">Sign Up</button>
             
             <div class="divider text-center my-3">
               <span>OR</span>
@@ -76,5 +81,34 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- JavaScript for Auth -->
   <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const password = document.getElementById('signupPassword');
+      const confirmPassword = document.getElementById('confirmPassword');
+      const signupButton = document.getElementById('signupButton');
+      
+      // Live validation for confirm password field
+      confirmPassword.addEventListener('input', validatePasswords);
+      password.addEventListener('input', validatePasswords);
+      
+      function validatePasswords() {
+        if (confirmPassword.value === '') {
+          // If empty, don't show error yet
+          confirmPassword.classList.remove('is-invalid');
+          confirmPassword.classList.remove('is-valid');
+        } else if (password.value !== confirmPassword.value) {
+          // Passwords don't match
+          confirmPassword.classList.add('is-invalid');
+          confirmPassword.classList.remove('is-valid');
+          signupButton.disabled = true;
+        } else {
+          // Passwords match
+          confirmPassword.classList.remove('is-invalid');
+          confirmPassword.classList.add('is-valid');
+          signupButton.disabled = false;
+        }
+      }
+    });
+  </script>
 </body>
 </html>
