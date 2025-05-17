@@ -227,6 +227,19 @@ document.addEventListener('DOMContentLoaded', function() {
   fileInput.addEventListener('change', function() {
     if (this.files && this.files[0]) {
       const file = this.files[0];
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size too large. Please select an image under 5MB.');
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return;
+      }
+      
       const reader = new FileReader();
       
       reader.onload = async function(e) {
@@ -235,7 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Display the selected image immediately
         profilePicture.src = imageData;
         
-        // Upload to server
+        // Show loading state
+        changePhotoBtn.disabled = true;
+        changePhotoBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Uploading...';
+        
         try {
           const response = await fetch(`${API_ENDPOINT}/profile-pictures`, {
             method: 'POST',
@@ -249,14 +265,28 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           
           if (!response.ok) {
-            throw new Error('Failed to upload profile picture');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to upload profile picture');
           }
           
+          const result = await response.json();
           console.log('Profile picture updated successfully');
+          showNotification('Profile picture updated successfully!', 'success');
         } catch (error) {
           console.error('Error uploading profile picture:', error);
-          alert('Failed to update profile picture. Please try again.');
+          showNotification(error.message || 'Failed to update profile picture. Please try again.', 'error');
+          // Revert to previous image if available
+          fetchProfilePicture();
+        } finally {
+          // Reset button state
+          changePhotoBtn.disabled = false;
+          changePhotoBtn.innerHTML = 'Change Photo';
         }
+      };
+      
+      reader.onerror = function() {
+        console.error('Error reading file');
+        showNotification('Error reading file. Please try again.', 'error');
       };
       
       reader.readAsDataURL(file);

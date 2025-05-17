@@ -24,6 +24,18 @@ router.post('/', isAuthenticated, async (req, res) => {
       return res.status(400).json({ message: 'Image data is required' });
     }
     
+    // Validate image data format
+    if (!imageData.startsWith('data:image/')) {
+      return res.status(400).json({ message: 'Invalid image format' });
+    }
+    
+    // Validate image size (max 5MB)
+    const base64Data = imageData.split(',')[1];
+    const imageSize = Math.ceil((base64Data.length * 3) / 4);
+    if (imageSize > 5 * 1024 * 1024) {
+      return res.status(400).json({ message: 'Image size too large. Maximum size is 5MB' });
+    }
+    
     // Ensure the requested userId matches the authenticated user
     if (parseInt(userId) !== req.userId) {
       return res.status(403).json({ message: 'Unauthorized' });
@@ -49,7 +61,7 @@ router.post('/', isAuthenticated, async (req, res) => {
     }
   } catch (err) {
     console.error('Error uploading profile picture:', err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal server error. Please try again later.' });
   }
 });
 
@@ -67,7 +79,7 @@ router.get('/:userId', async (req, res) => {
     res.status(200).json(profilePicture);
   } catch (err) {
     console.error('Error fetching profile picture:', err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal server error. Please try again later.' });
   }
 });
 
