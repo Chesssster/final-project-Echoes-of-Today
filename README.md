@@ -39,8 +39,8 @@ A digital space for individuals to document and reflect on their daily lives, th
 ### 📝 Updates
 
 - **Phase 1 (Week 11)**: 100%
-- **Phase 2 (Week 12)**: 80%
-- **Phase 3 (Week 13)**:
-- **Phase 4 (Week 14)**:
-- **Phase 5 (Week 15)**:
-- **Phase 6 (Week 16)**:
+- **Phase 2 (Week 12)**: 100%
+- **Phase 3 (Week 13)**: 100%
+- **Phase 4 (Week 14)**: 100%
+- **Phase 5 (Week 15)**: 100%
+- **Phase 6 (Week 16)**: 100%
